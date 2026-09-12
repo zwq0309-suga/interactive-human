@@ -58,19 +58,6 @@
   .info b { color: #4f8cff; }
   .info h3 { color: #4f8cff; margin: 0 0 10px; font-size: 16px; }
   .info p { margin: 6px 0; }
-
-  /* 播放按钮 */
-  .speakBtn {
-    display: inline-block;
-    margin-top: 10px;
-    padding: 8px 16px;
-    background: #4f8cff;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
-  }
 </style>
 </head>
 <body>
@@ -98,6 +85,11 @@
     <button data-part="knee">膝关节</button>
     <button data-part="shoulder">肩关节</button>
     <button data-part="spine">脊柱</button>
+  </div>
+
+  <!-- 语音开关按钮（常驻） -->
+  <div class="row">
+    <button id="voiceToggle" class="active">🔊 语音讲解：开</button>
   </div>
 
   <!-- 讲解文字框 -->
@@ -175,7 +167,7 @@
   const viewer = document.getElementById('viewer');
   const info   = document.getElementById('info');
 
-  // 讲解文案
+  // ---------- 讲解文案 ----------
   const texts = {
     knee: "<b>膝关节</b>：人体最大、最复杂的关节。由股骨、胫骨和髌骨组成，主要做屈伸运动，屈曲约 135°。<br><br>它是人体承重最大的关节：<br>· 平地走路时，膝盖承受约 <b>3 倍体重</b><br>· 上下楼梯时，约 <b>4-5 倍体重</b><br>· 跑步时，可达 <b>5-7 倍体重</b><br><br>膝关节里有半月板和交叉韧带，帮助缓冲和稳定。运动前充分热身，能有效保护膝盖。",
 
@@ -184,8 +176,11 @@
     spine: "<b>脊柱</b>：由 33 块椎骨组成，从上到下分为颈椎（7 块）、胸椎（12 块）、腰椎（5 块）、骶骨和尾骨。<br><br>脊柱有四个生理弯曲（颈曲、胸曲、腰曲、骶曲），像一个 <b>S 形弹簧</b>，能缓冲走路、跳跃时的冲击。<br><br>它既支撑身体重量，又允许弯腰、扭转等动作。久坐、低头看手机，会让腰椎和颈椎压力增大，容易引起疼痛。"
   };
 
-  // 语音播放
+  // ---------- 语音讲解（带常驻开关） ----------
+  let voiceOn = true;
+
   function speak(text) {
+    if (!voiceOn) return;
     if (!window.speechSynthesis) return;
     speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text.replace(/<[^>]+>/g, ''));
@@ -194,22 +189,30 @@
     speechSynthesis.speak(u);
   }
 
-  // 部位按钮
+  // 语音开关按钮
+  const voiceBtn = document.getElementById('voiceToggle');
+  voiceBtn.addEventListener('click', () => {
+    voiceOn = !voiceOn;
+    if (voiceOn) {
+      voiceBtn.classList.add('active');
+      voiceBtn.textContent = '🔊 语音讲解：开';
+    } else {
+      voiceBtn.classList.remove('active');
+      voiceBtn.textContent = '🔇 语音讲解：关';
+      speechSynthesis.cancel();
+    }
+  });
+
+  // ---------- 部位按钮 ----------
   document.querySelectorAll('#partRow button').forEach(btn => {
     btn.addEventListener('click', () => {
       const key = btn.dataset.part;
-      info.innerHTML = texts[key] +
-        '<br><button class="speakBtn" id="playVoice">🔊 播放语音讲解</button>';
+      info.innerHTML = texts[key];
+      speak(texts[key]);
       document.querySelectorAll('#partRow button')
         .forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
-      // 给播放按钮绑定事件
-      document.getElementById('playVoice').addEventListener('click', () => {
-        speak(texts[key]);
-      });
-
-      // 相机对准部位
       const camMap = {
         knee:     "0deg 75deg 2.5m",
         shoulder: "0deg 60deg 2.2m",
