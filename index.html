@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人体运动系统 · 交互科普</title>
+<script type="module"
+  src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js">
+</script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "PingFang SC", sans-serif;
+    background: #0f1115;
+    color: #fff;
+  }
+  header { padding: 14px 16px 6px; text-align: center; }
+  header h1 { font-size: 18px; margin: 0; }
+  header p  { font-size: 12px; color: #888; margin: 6px 0 0; }
+
+  model-viewer {
+    width: 100%;
+    height: 55vh;
+    background: #1a1d24;
+    --poster-color: transparent;
+  }
+  .panel { padding: 12px 16px 24px; }
+  .row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+  button {
+    flex: 1;
+    min-width: 80px;
+    padding: 10px 8px;
+    border: none;
+    border-radius: 10px;
+    background: #232833;
+    color: #ddd;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  button.active { background: #4f8cff; color: #fff; }
+
+  .info {
+    background: #1a1d24;
+    border-radius: 12px;
+    padding: 14px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #ccc;
+    min-height: 80px;
+    margin-bottom: 16px;
+  }
+  .info b { color: #4f8cff; }
+  .info h3 { color: #4f8cff; margin: 0 0 10px; font-size: 16px; }
+  .info p { margin: 6px 0; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>人体运动系统 · 交互科普</h1>
+  <p>拖动旋转 · 双指缩放 · 点击下方按钮查看讲解</p>
+</header>
+
+<model-viewer
+  id="viewer"
+  src="scene.gltf"
+  alt="人体运动系统模型"
+  camera-controls
+  auto-rotate
+  shadow-intensity="1"
+  exposure="1"
+  style="width:100%;height:55vh;background:#1a1d24;">
+</model-viewer>
+
+<div class="panel">
+
+  <!-- 点击部位讲解按钮 -->
+  <div class="row" id="partRow">
+    <button data-part="knee">膝关节</button>
+    <button data-part="shoulder">肩关节</button>
+    <button data-part="spine">脊柱</button>
+  </div>
+
+  <!-- 语音开关 -->
+  <div class="row">
+    <button id="voiceToggle" class="active">🔊 语音讲解：开</button>
+  </div>
+
+  <!-- 讲解文字框 -->
+  <div class="info" id="info">
+    点击上方按钮，查看关节的详细讲解。
+  </div>
+
+  <!-- 人体运动系统总览 -->
+  <div class="info">
+    <h3>🦴 人体运动系统总览</h3>
+    <p><b>运动系统由三部分组成：</b></p>
+    <p>1. <b>骨骼</b>：人体有 206 块骨，构成身体的支架，保护内脏，储存钙质。</p>
+    <p>2. <b>关节</b>：骨与骨之间的连接，是运动的“支点”。常见类型有不动的（如颅骨缝）、半动的（如椎骨之间）、可动的（如肩、膝、髋）。</p>
+    <p>3. <b>骨骼肌</b>：全身约 600 多块，通过肌腱附着在骨上。肌肉收缩牵动骨骼，产生运动。</p>
+
+    <p style="margin-top:10px;"><b>运动是怎么发生的？</b></p>
+    <p>大脑发出神经信号 → 肌肉收缩 → 通过肌腱拉动骨骼 → 骨骼绕关节转动 → 完成动作。</p>
+
+    <p style="margin-top:10px;"><b>三种基本运动形式：</b></p>
+    <p>· <b>屈伸</b>：如弯臂、抬腿</p>
+    <p>· <b>内收外展</b>：如手臂向身体靠拢或打开</p>
+    <p>· <b>旋转</b>：如转头、转肩</p>
+
+    <p style="margin-top:10px;"><b>💡 运动小知识：</b></p>
+    <p>· 成年人共有 <b>206</b> 块骨，婴儿约有 300 块，长大后部分融合</p>
+    <p>· 人体最小的骨是<b>镫骨</b>，在耳朵里，只有约 3 毫米</p>
+    <p>· 最长的骨是<b>股骨</b>，约占身高的 1/4</p>
+    <p>· 运动能刺激骨骼生长，让骨密度更高</p>
+  </div>
+
+  <!-- 常见运动损伤 -->
+  <div class="info">
+    <h3>⚠️ 常见运动损伤</h3>
+    <p><b>1. 跑步膝（髌骨疼痛综合征）</b><br>
+    表现为膝盖前方疼痛，常见于跑步、骑行爱好者。原因多为训练量过大、大腿肌肉力量不平衡。建议循序渐进增加跑量，加强股四头肌和臀肌训练。</p>
+
+    <p><b>2. 肩周炎（冻结肩）</b><br>
+    肩关节周围软组织发炎，导致疼痛和活动受限，常见于 40-60 岁人群。坚持适度活动、物理治疗有助于恢复。</p>
+
+    <p><b>3. 腰椎间盘突出</b><br>
+    椎间盘突出压迫神经，引起腰痛、腿麻。久坐、弯腰搬重物是常见诱因。日常注意坐姿，加强核心肌群训练。</p>
+
+    <p><b>4. 踝关节扭伤</b><br>
+    最常见的运动损伤之一，多发生在跑步、篮球、足球中。受伤后应及时冰敷、抬高，避免继续负重。</p>
+
+    <p><b>5. 肌肉拉伤</b><br>
+    肌肉过度拉伸或收缩导致纤维损伤，常见于大腿后侧、小腿。充分热身是预防关键。</p>
+  </div>
+
+  <!-- 科学运动建议 -->
+  <div class="info">
+    <h3>🏃 科学运动建议</h3>
+    <p><b>1. 热身（5-10 分钟）</b><br>
+    运动前做动态拉伸，如高抬腿、开合跳，让心率慢慢上升，肌肉温度提高，减少受伤风险。</p>
+
+    <p><b>2. 循序渐进</b><br>
+    每周运动量增加不超过 10%，给身体适应的时间。突然加量容易造成损伤。</p>
+
+    <p><b>3. 力量训练</b><br>
+    每周 2-3 次力量训练，强化肌肉和骨骼。深蹲、平板支撑、俯卧撑都是很好的基础动作。</p>
+
+    <p><b>4. 拉伸放松</b><br>
+    运动后做静态拉伸，每个动作保持 20-30 秒，帮助肌肉恢复，减少酸痛。</p>
+
+    <p><b>5. 补充营养和水分</b><br>
+    运动前后适量补水，摄入足够蛋白质和钙质，有助于肌肉修复和骨骼健康。</p>
+
+    <p><b>6. 充足睡眠</b><br>
+    睡眠是身体修复的黄金时间，每天保证 7-8 小时，运动效果更好。</p>
+  </div>
+
+</div>
+
+<script>
+  const viewer = document.getElementById('viewer');
+  const info   = document.getElementById('info');
+
+  // ---------- 讲解文案 ----------
+  const texts = {
+    knee: "<b>膝关节</b>：人体最大、最复杂的关节。由股骨、胫骨和髌骨组成，主要做屈伸运动，屈曲约 135°。<br><br>它是人体承重最大的关节：<br>· 平地走路时，膝盖承受约 <b>3 倍体重</b><br>· 上下楼梯时，约 <b>4-5 倍体重</b><br>· 跑步时，可达 <b>5-7 倍体重</b><br><br>膝关节里有半月板和交叉韧带，帮助缓冲和稳定。运动前充分热身，能有效保护膝盖。",
+
+    shoulder: "<b>肩关节</b>：人体活动范围最大的关节，属于球窝关节。由肱骨头和肩胛骨的关节盂组成，可做屈伸、内收外展、旋转、环转等多种运动。<br><br>肩关节的稳定性主要靠 <b>肩袖肌群</b>（冈上肌、冈下肌、小圆肌、肩胛下肌）维持。<br><br>因为活动大、稳定性相对弱，肩关节容易脱位。加强肩袖训练，是预防肩伤的关键。",
+
+    spine: "<b>脊柱</b>：由 33 块椎骨组成，从上到下分为颈椎（7 块）、胸椎（12 块）、腰椎（5 块）、骶骨和尾骨。<br><br>脊柱有四个生理弯曲（颈曲、胸曲、腰曲、骶曲），像一个 <b>S 形弹簧</b>，能缓冲走路、跳跃时的冲击。<br><br>它既支撑身体重量，又允许弯腰、扭转等动作。久坐、低头看手机，会让腰椎和颈椎压力增大，容易引起疼痛。"
+  };
+
+  // ---------- 语音讲解（带开关） ----------
+  let voiceOn = true;
+
+  function speak(text) {
+    if (!voiceOn) return;
+    if (!window.speechSynthesis) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text.replace(/<[^>]+>/g, ''));
+    u.lang = 'zh-CN';
+    u.rate = 1;
+    speechSynthesis.speak(u);
+  }
+
+  // 语音开关按钮
+  const voiceBtn = document.getElementById('voiceToggle');
+  voiceBtn.addEventListener('click', () => {
+    voiceOn = !voiceOn;
+    if (voiceOn) {
+      voiceBtn.classList.add('active');
+      voiceBtn.textContent = '🔊 语音讲解：开';
+    } else {
+      voiceBtn.classList.remove('active');
+      voiceBtn.textContent = '🔇 语音讲解：关';
+      speechSynthesis.cancel();
+    }
+  });
+
+  // ---------- 部位按钮 ----------
+  document.querySelectorAll('#partRow button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const key = btn.dataset.part;
+      info.innerHTML = texts[key];
+      speak(texts[key]);
+      document.querySelectorAll('#partRow button')
+        .forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      const camMap = {
+        knee:     "0deg 75deg 2.5m",
+        shoulder: "0deg 60deg 2.2m",
+        spine:    "30deg 90deg 2.8m"
+      };
+      viewer.cameraOrbit = camMap[key];
+    });
+  });
+</script>
+
+</body>
+</html>
