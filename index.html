@@ -87,11 +87,6 @@
     <button data-part="spine">脊柱</button>
   </div>
 
-  <!-- 语音开关按钮（常驻） -->
-  <div class="row">
-    <button id="voiceToggle" class="active">🔊 语音讲解：开</button>
-  </div>
-
   <!-- 讲解文字框 -->
   <div class="info" id="info">
     点击上方按钮，查看关节的详细讲解。
@@ -176,43 +171,16 @@
     spine: "<b>脊柱</b>：由 33 块椎骨组成，从上到下分为颈椎（7 块）、胸椎（12 块）、腰椎（5 块）、骶骨和尾骨。<br><br>脊柱有四个生理弯曲（颈曲、胸曲、腰曲、骶曲），像一个 <b>S 形弹簧</b>，能缓冲走路、跳跃时的冲击。<br><br>它既支撑身体重量，又允许弯腰、扭转等动作。久坐、低头看手机，会让腰椎和颈椎压力增大，容易引起疼痛。"
   };
 
-  // ---------- 语音讲解（带常驻开关） ----------
-  let voiceOn = true;
-
-  function speak(text) {
-    if (!voiceOn) return;
-    if (!window.speechSynthesis) return;
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text.replace(/<[^>]+>/g, ''));
-    u.lang = 'zh-CN';
-    u.rate = 1;
-    speechSynthesis.speak(u);
-  }
-
-  // 语音开关按钮
-  const voiceBtn = document.getElementById('voiceToggle');
-  voiceBtn.addEventListener('click', () => {
-    voiceOn = !voiceOn;
-    if (voiceOn) {
-      voiceBtn.classList.add('active');
-      voiceBtn.textContent = '🔊 语音讲解：开';
-    } else {
-      voiceBtn.classList.remove('active');
-      voiceBtn.textContent = '🔇 语音讲解：关';
-      speechSynthesis.cancel();
-    }
-  });
-
   // ---------- 部位按钮 ----------
   document.querySelectorAll('#partRow button').forEach(btn => {
     btn.addEventListener('click', () => {
       const key = btn.dataset.part;
       info.innerHTML = texts[key];
-      speak(texts[key]);
       document.querySelectorAll('#partRow button')
         .forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
 
+      // 相机对准部位
       const camMap = {
         knee:     "0deg 75deg 2.5m",
         shoulder: "0deg 60deg 2.2m",
