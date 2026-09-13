@@ -58,6 +58,42 @@
   .info b { color: #4f8cff; }
   .info h3 { color: #4f8cff; margin: 0 0 10px; font-size: 16px; }
   .info p { margin: 6px 0; }
+
+  /* 测验样式 */
+  .quiz {
+    background: #1a1d24;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+  .quiz h3 { color: #4f8cff; margin: 0 0 10px; font-size: 16px; }
+  .quiz-q { margin-bottom: 16px; }
+  .quiz-q p { margin: 0 0 8px; font-weight: bold; }
+  .quiz-opt {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    margin-bottom: 6px;
+    border-radius: 8px;
+    background: #232833;
+    color: #ddd;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .quiz-opt.correct { background: #1f6b3a; color: #fff; }
+  .quiz-opt.wrong   { background: #7a2c2c; color: #fff; }
+  .quiz-result {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    background: #4f8cff;
+    color: #fff;
+    text-align: center;
+    font-weight: bold;
+    display: none;
+  }
 </style>
 </head>
 <body>
@@ -80,16 +116,26 @@
 
 <div class="panel">
 
-  <!-- 点击部位讲解按钮 -->
+  <!-- 部位按钮：6个 -->
   <div class="row" id="partRow">
     <button data-part="knee">膝关节</button>
     <button data-part="shoulder">肩关节</button>
     <button data-part="spine">脊柱</button>
+    <button data-part="hip">髋关节</button>
+    <button data-part="ankle">踝关节</button>
+    <button data-part="elbow">肘关节</button>
   </div>
 
   <!-- 讲解文字框 -->
   <div class="info" id="info">
     点击上方按钮，查看关节的详细讲解。
+  </div>
+
+  <!-- 知识小测验 -->
+  <div class="quiz">
+    <h3>📝 知识小测验（共 5 题）</h3>
+    <div id="quizBox"></div>
+    <div class="quiz-result" id="quizResult"></div>
   </div>
 
   <!-- 人体运动系统总览 -->
@@ -168,7 +214,13 @@
 
     shoulder: "<b>肩关节</b>：人体活动范围最大的关节，属于球窝关节。由肱骨头和肩胛骨的关节盂组成，可做屈伸、内收外展、旋转、环转等多种运动。<br><br>肩关节的稳定性主要靠 <b>肩袖肌群</b>（冈上肌、冈下肌、小圆肌、肩胛下肌）维持。<br><br>因为活动大、稳定性相对弱，肩关节容易脱位。加强肩袖训练，是预防肩伤的关键。",
 
-    spine: "<b>脊柱</b>：由 33 块椎骨组成，从上到下分为颈椎（7 块）、胸椎（12 块）、腰椎（5 块）、骶骨和尾骨。<br><br>脊柱有四个生理弯曲（颈曲、胸曲、腰曲、骶曲），像一个 <b>S 形弹簧</b>，能缓冲走路、跳跃时的冲击。<br><br>它既支撑身体重量，又允许弯腰、扭转等动作。久坐、低头看手机，会让腰椎和颈椎压力增大，容易引起疼痛。"
+    spine: "<b>脊柱</b>：由 33 块椎骨组成，从上到下分为颈椎（7 块）、胸椎（12 块）、腰椎（5 块）、骶骨和尾骨。<br><br>脊柱有四个生理弯曲（颈曲、胸曲、腰曲、骶曲），像一个 <b>S 形弹簧</b>，能缓冲走路、跳跃时的冲击。<br><br>它既支撑身体重量，又允许弯腰、扭转等动作。久坐、低头看手机，会让腰椎和颈椎压力增大，容易引起疼痛。",
+
+    hip: "<b>髋关节</b>：由股骨头和髋臼组成的球窝关节，是人体最稳定的关节之一。<br><br>它承受全身重量，走路时承受约 <b>3 倍体重</b>，跑步时可达 <b>5 倍以上</b>。<br><br>髋关节周围有强壮的肌肉和韧带保护，活动范围比肩关节小，但稳定性强。久坐会让髋部肌肉紧张，建议多做拉伸。",
+
+    ankle: "<b>踝关节</b>：由胫骨、腓骨和距骨组成，主要做背屈和跖屈运动。<br><br>它是人体最容易受伤的关节之一，<b>踝关节扭伤</b>是最常见的运动损伤。<br><br>踝关节承受全身重量，跑步时冲击可达体重的数倍。加强踝周肌肉训练、穿合适的鞋，能有效预防扭伤。",
+
+    elbow: "<b>肘关节</b>：由肱骨、尺骨和桡骨组成，主要做屈伸运动。<br><br>它连接上臂和前臂，是抓握、投掷、提拉等动作的关键。<br><br>常见的肘部问题有<b>网球肘</b>（肱骨外上髁炎）和<b>高尔夫球肘</b>（肱骨内上髁炎），多由反复用力引起。注意劳逸结合，加强前臂肌肉训练。"
   };
 
   // ---------- 部位按钮 ----------
@@ -184,10 +236,82 @@
       const camMap = {
         knee:     "0deg 75deg 2.5m",
         shoulder: "0deg 60deg 2.2m",
-        spine:    "30deg 90deg 2.8m"
+        spine:    "30deg 90deg 2.8m",
+        hip:      "0deg 80deg 2.5m",
+        ankle:    "0deg 100deg 2.5m",
+        elbow:    "0deg 65deg 2.2m"
       };
       viewer.cameraOrbit = camMap[key];
     });
+  });
+
+  // ---------- 知识小测验 ----------
+  const quizData = [
+    {
+      q: "1. 成年人一共有多少块骨？",
+      opts: ["180 块", "206 块", "300 块"],
+      ans: 1
+    },
+    {
+      q: "2. 人体最长的骨是哪一块？",
+      opts: ["肱骨", "股骨", "胫骨"],
+      ans: 1
+    },
+    {
+      q: "3. 跑步时膝盖承受约多少倍体重？",
+      opts: ["1-2 倍", "3 倍", "5-7 倍"],
+      ans: 2
+    },
+    {
+      q: "4. 人体活动范围最大的关节是？",
+      opts: ["膝关节", "肩关节", "髋关节"],
+      ans: 1
+    },
+    {
+      q: "5. 人体最小的骨在哪？",
+      opts: ["手指", "耳朵", "脚趾"],
+      ans: 1
+    }
+  ];
+
+  let answered = 0;
+  let correctCount = 0;
+
+  const quizBox = document.getElementById('quizBox');
+  const quizResult = document.getElementById('quizResult');
+
+  quizData.forEach((item, qi) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-q';
+    div.innerHTML = `<p>${item.q}</p>`;
+    item.opts.forEach((opt, oi) => {
+      const btn = document.createElement('button');
+      btn.className = 'quiz-opt';
+      btn.textContent = opt;
+      btn.addEventListener('click', () => {
+        // 已经答过就不再响应
+        if (btn.disabled) return;
+        // 禁用这一题的所有按钮
+        div.querySelectorAll('.quiz-opt').forEach(b => b.disabled = true);
+
+        if (oi === item.ans) {
+          btn.classList.add('correct');
+          correctCount++;
+        } else {
+          btn.classList.add('wrong');
+          // 把正确答案标绿
+          div.querySelectorAll('.quiz-opt')[item.ans].classList.add('correct');
+        }
+        answered++;
+
+        if (answered === quizData.length) {
+          quizResult.style.display = 'block';
+          quizResult.textContent = `🎉 你答对了 ${correctCount} / ${quizData.length} 题！`;
+        }
+      });
+      div.appendChild(btn);
+    });
+    quizBox.appendChild(div);
   });
 </script>
 
